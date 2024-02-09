@@ -8,11 +8,16 @@ COPY frontend .
 RUN npm run build-only -- --outDir dist
 
 
+FROM python:3.11-alpine AS backend-build
+WORKDIR /app
+
+COPY backend .
+RUN pip install --no-cache-dir -r requirements.txt && rm -rf external
+
+
 FROM python:3.11-alpine AS final
 WORKDIR /app
 
-COPY backend/requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY backend .
+COPY --from=backend-build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=backend-build /app .
 COPY --from=vue-build /vue-app/dist fakturyfy/app/templates

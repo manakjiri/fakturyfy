@@ -1,8 +1,8 @@
-.DS_Store
-__pycache__
-.venv
-dist
-node_modules
+**/.DS_Store
+**/__pycache__
+**/.venv
+**/dist
+**/node_modules
 
 logs
 *.log
@@ -14,3 +14,4 @@ db.*
 
 backend/fakturyfy/app/templates/**
 
+data
