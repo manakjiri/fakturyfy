@@ -32,5 +32,15 @@ const app = createApp(App)
 app.use(router)
 app.use(vuetify)
 
+// Global error handler
+app.config.errorHandler = (err, instance, info) => {
+    // Handle the error globally
+    console.error("Global error:", err);
+    console.log("Vue instance:", instance);
+    console.log("Error info:", info);
+
+    // Add code for UI notifications, reporting or other error handling logic
+};
+
 
 app.mount('#app')

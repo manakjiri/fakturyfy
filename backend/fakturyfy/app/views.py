@@ -45,3 +45,17 @@ class NewInvoice(APIView):
         
         else:
             return Response({'error': new_invoice_serializer.errors})
+
+class ListInvoices(APIView):
+    def get(self, request: Request, provider: int, client: int):
+        p = models.Entity.objects.get(pk=provider)
+        c = models.Entity.objects.get(pk=client)
+        history = History(p.abbreviation, c.abbreviation, 'all')
+        ret = []
+        for invoice in history.get_all():
+            ret.append({
+                'path': str(invoice.relative_to(DATA_DIR)),
+                'name': invoice.name,
+                'modify_time': int(invoice.stat().st_mtime)
+            })
+        return Response(ret)
