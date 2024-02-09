@@ -13,12 +13,14 @@
   <v-container v-if="faktury"> 
     <v-row >
       <v-col cols="auto">
-         <v-select class="selector" label="Poskytovatel" :items="entities" item-title="abbreviation" item-value="id"></v-select>
+         <v-select class="selector" label="Poskytovatel" :items="entities" item-title="abbreviation" ></v-select>
       </v-col>
       <v-col cols="auto">
-         <v-select class="selector" label="Odběratel" :items="entities" item-title="abbreviation" item-value="id"></v-select>
+         <v-select class="selector" label="Odběratel" :items="entities" item-title="abbreviation"></v-select>
       </v-col>
     </v-row>
+    <v-btn @click="showFakturaForm = true">Nová faktura</v-btn>
+
     
   </v-container>
 
@@ -46,17 +48,25 @@
       <EntityForm></EntityForm>
     </v-dialog>
   </v-container>
+
+  <v-container>
+    <v-dialog v-model="showFakturaForm" scrim="true" class="form">
+      <FakturaForm></FakturaForm>
+    </v-dialog>
+  </v-container>
+
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import EntityForm from "@/components/EntityForm.vue";
-import { fa } from "vuetify/locale";
+import FakturaForm from "@/components/FakturaForm.vue";
 import useFetching from "@/js/useFetching";
 
 const {Axios} = useFetching();
 
 const showForm = ref(false);
+const showFakturaForm = ref(false);
 const faktury = ref(true);
 const subjekty = ref(false);
 

@@ -15,6 +15,7 @@ export default defineConfig({
   },
   build : {
     outDir: '../backend/fakturyfy/app/templates',
-    assetsDir: 'static'
+    assetsDir: 'static',
+    chunkSizeWarningLimit: 1600, //todo pak  vyresit
   },
 })
