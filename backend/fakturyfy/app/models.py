@@ -24,7 +24,9 @@ class Entity(models.Model):
     """
 
     name = models.CharField(max_length=150)
-    abbreviation = models.CharField(max_length=7, blank=True)
+
+    abbreviation = models.CharField(max_length=50, unique=True)
+    tax_number = models.CharField(max_length=15, blank=True)
     ic_number = models.IntegerField()
     tax_number = models.CharField(max_length=15, blank=True)
     tax_note = models.TextField(blank=True)
@@ -37,5 +39,5 @@ class Entity(models.Model):
     bank_account = models.CharField(max_length=50)
     bank_code = models.CharField(max_length=4)
     bank_name = models.CharField(max_length=50, blank=True)
-    logo_filename = models.CharField(max_length=25, blank=True)
+    logo = models.ImageField(upload_to='logos', blank=True)
 
