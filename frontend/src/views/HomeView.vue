@@ -141,7 +141,25 @@
 import axios from 'axios'
 import { onMounted, ref } from 'vue';
 
-const form_values = ref({
+interface Entity {
+  name: string;
+  abbreviation: string;
+  ic_number: string;
+  tax_number: string;
+  tax_note: string;
+  bank_account: string;
+  bank_code: string;
+  bank_name: string;
+  address: string;
+  zip_code: string;
+  city: string;
+  country: string;
+  email: string;
+  phone: string;
+  logo: string | null;
+}
+
+const form_values = ref<Entity>({
   name: '',
   abbreviation: '',
   ic_number: '',
@@ -168,10 +186,30 @@ const headers = [
   { title: "Info/Edit", value: "edit"}
 ];
 
+function getCookie(name: string) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
 const Axios = axios.create({
-    baseURL: `http://127.0.0.1:8000/api/`,
+    baseURL: `http://${window.location.hostname}:${window.location.port}/api/`,
     timeout: 5000,
 });
+Axios.defaults.headers.post['X-CSRFToken'] = getCookie('csrftoken');
+Axios.defaults.headers.post['Accept'] = 'application/json';
+Axios.defaults.headers.post['Content-Type'] = 'application/json';
+Axios.defaults.headers.delete['X-CSRFToken'] = getCookie('csrftoken');
 
 async function getEntities() {
   console.log('getEntities');
@@ -187,7 +225,9 @@ async function getEntities() {
 async function newEntity() {
   console.log('newEntity');
   try {
-    const response = await Axios.post('entity/', form_values.value);
+    const req = form_values.value;
+    console.log(req);
+    const response = await Axios.post('entity/', req);
     console.log(response.data);
     return response.data;
   } catch (error) {
