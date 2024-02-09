@@ -108,20 +108,23 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <v-row justify="space-between">
+            <v-col cols="auto"> </v-col>
+            <v-col cols="auto">
+              <v-btn @click="newEntity">Uložit</v-btn>
+            </v-col>
+          </v-row>
         </v-container>
-        <v-btn @click="newEntity">Uložit</v-btn>
       </v-form>
     </v-card>
   </div>
 </template>
 
-
-
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import useFetching from "@/js/useFetching";
 
-const {Axios} = useFetching();
+const { Axios } = useFetching();
 
 const showForm = ref(false);
 
@@ -144,30 +147,29 @@ interface Entity {
 }
 
 const form_values = ref<Entity>({
-  name: '',
-  abbreviation: '',
-  ic_number: '',
-  tax_number: '',
-  tax_note: '',
-  bank_account: '',
-  bank_code: '',
-  bank_name: '',
-  address: '',
-  zip_code: '',
-  city: '',
-  country: '',
-  email: '',
-  phone: '',
+  name: "",
+  abbreviation: "",
+  ic_number: "",
+  tax_number: "",
+  tax_note: "",
+  bank_account: "",
+  bank_code: "",
+  bank_name: "",
+  address: "",
+  zip_code: "",
+  city: "",
+  country: "",
+  email: "",
+  phone: "",
   logo: null,
 });
-
 
 async function newEntity() {
   console.log("newEntity");
   try {
     const req = form_values.value;
     console.log(req);
-    const response = await Axios.post('entity/', req);
+    const response = await Axios.post("entity/", req);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -176,5 +178,4 @@ async function newEntity() {
 }
 
 const entities = ref();
-
 </script>

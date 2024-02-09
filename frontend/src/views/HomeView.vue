@@ -18,7 +18,12 @@
       <v-col cols="auto">
          <v-select class="selector" label="Odběratel" v-model="client_id" :items="entities" item-title="abbreviation" item-value="id"></v-select>
       </v-col>
+      <v-spacer></v-spacer>
+      <v-col cols="auto">
+        <v-btn @click="showFakturaForm = true">Nová faktura</v-btn>
+      </v-col>
     </v-row>
+    
     <v-row v-for="invoice in existing_invoices" :key="invoice.name">
       <v-col cols="12" sm="1" justify="left"><v-icon icon="mdi-file-pdf-box"></v-icon></v-col>
       <v-col cols="12" sm="5" justify="left"> {{ invoice.name }} </v-col>
@@ -54,16 +59,25 @@
       <EntityForm></EntityForm>
     </v-dialog>
   </v-container>
+
+  <v-container>
+    <v-dialog v-model="showFakturaForm" scrim="true" class="form">
+      <FakturaForm></FakturaForm>
+    </v-dialog>
+  </v-container>
+
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import EntityForm from "@/components/EntityForm.vue";
+import FakturaForm from "@/components/FakturaForm.vue";
 import useFetching from "@/js/useFetching";
 
 const {Axios} = useFetching();
 
 const showForm = ref(false);
+const showFakturaForm = ref(false);
 const faktury = ref(true);
 const subjekty = ref(false);
 
