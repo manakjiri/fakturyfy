@@ -22,7 +22,7 @@ class Command(BaseCommand):
                         bank_account="1234567890", 
                         bank_code="1234", 
                         bank_name="Cat Bank", 
-                        note="Poznámka")
+                        tax_note="Poznámka")
 
             cat1.save()
             self.stdout.write(self.style.SUCCESS('Successfully added entity "%s"' % cat1.name))
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                         bank_account="0987654321", 
                         bank_code="4321", 
                         bank_name="Cat Bank", 
-                        note="Poznámka")
+                        tax_note="Poznámka")
             
             cat2.save()
             self.stdout.write(self.style.SUCCESS('Successfully added entity "%s"' % cat2.name))

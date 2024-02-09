@@ -24,9 +24,7 @@ class Entity(models.Model):
     """
 
     name = models.CharField(max_length=150)
-
     abbreviation = models.CharField(max_length=50, unique=True)
-    tax_number = models.CharField(max_length=15, blank=True)
     ic_number = models.IntegerField()
     tax_number = models.CharField(max_length=15, blank=True)
     tax_note = models.TextField(blank=True)
