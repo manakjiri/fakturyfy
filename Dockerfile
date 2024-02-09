@@ -12,8 +12,12 @@ RUN npm run build-only -- --outDir dist
 FROM base AS backend-build
 WORKDIR /app
 
+COPY backend/requirements.txt requirements.txt
+COPY backend/external external
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY backend .
-RUN pip install --no-cache-dir -r requirements.txt && rm -rf external
+RUN rm -rf external
 
 
 FROM base AS final

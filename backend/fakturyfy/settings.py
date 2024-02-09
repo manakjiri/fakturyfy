@@ -123,6 +123,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "fakturyfy/app/templates/static",
+    DATA_DIR,
 ]
 
 # Default primary key field type

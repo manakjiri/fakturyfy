@@ -5,11 +5,12 @@ from pathlib import Path
 from InvoiceGenerator.api import Invoice, Item, Creator, Client, Provider
 from InvoiceGenerator.pdf import ProformaInvoice
 from fakturyfy.app.models import Entity
+from fakturyfy.app.serializers import NewInvoiceRequest, RequestItem
 
 os.environ["INVOICE_LANG"] = "cs"
 
 class InvoiceExporter:
-    def __init__(self, number: str, provider: Entity, client: Entity, item_list: list) -> None:
+    def __init__(self, number: str, provider: Entity, client: Entity, item_list: list[RequestItem]) -> None:
         
         self.provider = Provider(
             provider.name,
@@ -44,7 +45,7 @@ class InvoiceExporter:
             vat_note=client.tax_note,
         )
         
-        self.number = number
+        self.number = str(number)
         self.item_list = item_list
         self.date = datetime.now()
         self.payback = self.date + relativedelta(months=1)
@@ -69,8 +70,11 @@ class InvoiceExporter:
 
         for item in self.item_list:
             invoice.add_item(Item(
-                item[0], item[1], description=item[2],
-                tax=0 if len(item) < 4 else item[3],
+                description=item.description,
+                count=item.quantity,
+                price=item.price,
+                tax=item.tax,
+                unit='ks'
             ))
 
         number = str(self.date.year) + self.number
@@ -88,4 +92,14 @@ class InvoiceExporter:
         document.gen(str(path), generate_qr_code=True)
         return path
 
+
+def generate_invoice(number: int, request: NewInvoiceRequest, target_dir: Path) -> Path:
+    target_dir = Path(target_dir)
+    target_dir.mkdir(exist_ok=True, parents=True)
+    
+    exporter = InvoiceExporter(number, request.provider, request.client, request.item_list)
+    exporter.set_date(request.date)
+    exporter.set_payback(request.paydate)
+    
+    return exporter.as_pdf(target_dir)
 
