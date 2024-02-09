@@ -14,7 +14,7 @@ export default defineConfig({
     }
   },
   build : {
-    outDir: '../backend/faturyfy/apps/core/templates/core',
+    outDir: '../backend/fakturyfy/app/templates',
     assetsDir: 'static'
   },
 })
