@@ -9,7 +9,7 @@ class History:
         self.year = year
         self.provider_abbrev = self._sanitize(provider_abbrev)
         self.client_abbrev = self._sanitize(client_abbrev)
-        self.history_dir = DATA_DIR / 'history' / f'{self.provider_abbrev}->{self.client_abbrev}'
+        self.history_dir = DATA_DIR / 'history' / f'{self.provider_abbrev}-{self.client_abbrev}'
 
     @staticmethod
     def _sanitize(fileneame: str) -> str:
