@@ -118,38 +118,56 @@
 
 
 <script setup lang="ts">
-import axios from "axios";
 import { onMounted, ref } from "vue";
+import useFetching from "@/js/useFetching";
+
+const {Axios} = useFetching();
 
 const showForm = ref(false);
 
-const form_values = ref({
-  name: "",
-  abbreviation: "",
-  ic_number: "",
-  tax_number: "",
-  tax_note: "",
-  bank_account: "",
-  bank_code: "",
-  bank_name: "",
-  address: "",
-  zip_code: "",
-  city: "",
-  country: "",
-  email: "",
-  phone: "",
+interface Entity {
+  name: string;
+  abbreviation: string;
+  ic_number: string;
+  tax_number: string;
+  tax_note: string;
+  bank_account: string;
+  bank_code: string;
+  bank_name: string;
+  address: string;
+  zip_code: string;
+  city: string;
+  country: string;
+  email: string;
+  phone: string;
+  logo: string | null;
+}
+
+const form_values = ref<Entity>({
+  name: '',
+  abbreviation: '',
+  ic_number: '',
+  tax_number: '',
+  tax_note: '',
+  bank_account: '',
+  bank_code: '',
+  bank_name: '',
+  address: '',
+  zip_code: '',
+  city: '',
+  country: '',
+  email: '',
+  phone: '',
   logo: null,
 });
 
-const Axios = axios.create({
-  baseURL: `http://127.0.0.1:8000/api/`,
-  timeout: 5000,
-});
 
 async function newEntity() {
   console.log("newEntity");
   try {
-    const response = await Axios.post("entity/", form_values.value);
+    const req = form_values.value;
+    console.log(req);
+    const response = await Axios.post('entity/', req);
     console.log(response.data);
     return response.data;
   } catch (error) {
