@@ -14,3 +14,4 @@ db.*
 
 backend/fakturyfy/app/templates/**
 
+data
