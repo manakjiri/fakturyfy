@@ -47,15 +47,26 @@ class NewInvoice(APIView):
             return Response({'error': new_invoice_serializer.errors})
 
 class ListInvoices(APIView):
-    def get(self, request: Request, provider: int, client: int):
-        p = models.Entity.objects.get(pk=provider)
-        c = models.Entity.objects.get(pk=client)
-        history = History(p.abbreviation, c.abbreviation, 'all')
+    def get(self, request: Request):
+        get_invoices_serializer = serializers.GetInvoicesSerializer(data=request.query_params)
+        if not get_invoices_serializer.is_valid():
+            return Response({'error': get_invoices_serializer.errors})
+        
+        request: serializers.GetInvoicesRequest = get_invoices_serializer.save()
+        providers = [models.Entity.objects.get(pk=request.provider_id)] if request.provider_id else models.Entity.objects.all()
+        clients = [models.Entity.objects.get(pk=request.client_id)] if request.client_id else models.Entity.objects.all()
         ret = []
-        for invoice in history.get_all():
-            ret.append({
-                'path': str(invoice.relative_to(DATA_DIR)),
-                'name': invoice.name,
-                'modify_time': int(invoice.stat().st_mtime)
-            })
-        return Response(ret)
+        
+        for p in providers:
+            for c in clients:
+                history = History(p.abbreviation, c.abbreviation, 'all')
+                for invoice in history.get_all():
+                    ret.append({
+                        'path': str(invoice.relative_to(DATA_DIR)),
+                        'name': invoice.name,
+                        'provider': p.abbreviation,
+                        'client': c.abbreviation,
+                        'modify_time': int(invoice.stat().st_mtime)
+                    })
+        
+        return Response(sorted(ret, key=lambda x: x['modify_time'], reverse=True))
