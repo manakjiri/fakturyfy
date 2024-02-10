@@ -3,6 +3,9 @@
     <v-card>
       <v-form>
         <v-container>
+            <v-row class="text-h5 ml-2 font-weight-light mt-2 pd-2">
+                Nová faktura
+            </v-row>
           <v-row>
             <v-col>
               <v-text-field
@@ -58,10 +61,10 @@
           </v-row>
           <v-row justify="space-between">
                 <v-col cols="auto">
-                    <v-btn @click="addItem">Přidat položku</v-btn>
+                    <v-btn style="background-color: rgb(101, 101, 101);" @click="addItem">Přidat položku</v-btn>
                 </v-col>
                 <v-col cols="auto">
-                    <v-btn @click="newInvoice">Vytvořit fakturu</v-btn>
+                    <v-btn style="background-color: rgb(101, 101, 101);" @click="newInvoice">Vytvořit fakturu</v-btn>
                 </v-col>
           </v-row>
         </v-container>
@@ -107,22 +110,21 @@ function addItem() {
 const new_invoice = ref<Invoice>({
   item_list: [],
   date: new Date().toISOString().slice(0, 10),
-  paydate: "",
+  paydate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().slice(0, 10),
   currency: "CZK",
   save: false,
 });
 
 async function newInvoice() {
   const invoice = {
-    provider_id: 1,
-    client_id: 1,
+    provider_id: props.provider_id,
+    client_id: props.client_id,
     item_list: items,
     date: new_invoice.value.date,
     paydate: new_invoice.value.paydate,
     currency: new_invoice.value.currency,
     save: true,
   };
-  console.log("newInvoice");
   try {
     console.log(invoice);
     const response = await Axios.post("invoice/new", invoice);
