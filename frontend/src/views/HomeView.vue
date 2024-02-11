@@ -52,15 +52,15 @@
               size="x-large"
               style="height: 57px"
               @click="showFakturaForm = true"
-              :disabled="providerClientNotSelected"
+              :disabled=providerClientNotSelected
               >Nová faktura</v-btn
             >
           </v-col>
         </v-row>
       </v-sheet>
 
-      <v-card class="my-card">
-        <v-container v-if="existing_invoices">
+      <v-card class="my-card" v-if="existing_invoices.length > 0">
+        <v-container>
           <v-row
             v-for="invoice in existing_invoices"
             :key="invoice.name"
@@ -71,19 +71,11 @@
                 <v-col cols="1"
                   ><v-icon icon="mdi-file-pdf-box"></v-icon
                 ></v-col>
-                <v-col
-                  ><v-sheet class="my-sheet">{{ invoice.name }}</v-sheet></v-col
-                >
-                <v-col
-                  ><v-sheet class="my-sheet"
-                    >{{ invoice.provider }} → {{ invoice.client }}</v-sheet
-                  ></v-col
-                >
-                <v-col
-                  ><v-sheet class="my-sheet">{{
-                    new Date(invoice.modify_time * 1000).toLocaleString("cs")
-                  }}</v-sheet></v-col
-                >
+                <v-col>{{ invoice.name }}</v-col>
+                <v-col>{{ invoice.provider }} → {{ invoice.client }}</v-col>
+                <v-col>{{
+                  new Date(invoice.modify_time * 1000).toLocaleString("cs")
+                }}</v-col>
               </v-row>
             </v-col>
             <v-col><v-spacer></v-spacer></v-col>
@@ -118,7 +110,9 @@
         </v-row>
       </v-container>
 
-      <v-row class="text-h5 mt-15 mb-5 font-weight-light">Uložené subjekty</v-row>
+      <v-row class="text-h5 mt-15 mb-5 font-weight-light"
+        >Uložené subjekty</v-row
+      >
       <v-row>
         <v-data-table
           class="my-data-table elevation-2"
@@ -142,26 +136,30 @@
         </v-col>
       </v-row>
     </v-container>
-
-    <v-container>
-      <v-dialog v-model="showForm" scrim="true" class="form">
-        <EntityForm :entity_id="chosenEntityId"></EntityForm>
-      </v-dialog>
-    </v-container>
-
-    <v-container>
-      <v-dialog v-model="showFakturaForm" scrim="true" class="form">
-        <FakturaForm
-          :client_id="client_id"
-          :provider_id="provider_id"
-        ></FakturaForm>
-      </v-dialog>
-    </v-container>
   </v-slide-x-reverse-transition>
+
+  <v-container>
+    <v-dialog v-model="showForm" scrim="true" class="form">
+      <EntityForm
+        @close="showForm = false"
+        @updated="getEntities"
+        :entity_id="chosenEntityId"
+      ></EntityForm>
+    </v-dialog>
+  </v-container>
+
+  <v-container>
+    <v-dialog v-model="showFakturaForm" scrim="true" class="form">
+      <FakturaForm
+        :client_id="client_id"
+        :provider_id="provider_id"
+      ></FakturaForm>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import EntityForm from "@/components/EntityForm.vue";
 import FakturaForm from "@/components/FakturaForm.vue";
 import useFetching from "@/js/useFetching";
@@ -211,9 +209,9 @@ function clearSelectionProvider() {
   provider_id.value = null;
 }
 
-function providerClientNotSelected() {
-  return !(client_id.value && provider_id.value);
-}
+const providerClientNotSelected = computed( () => {
+  return !(client_id.value !== null && provider_id.value !== null);
+})
 
 watch([client_id, provider_id], async () => {
   if (client_id.value || provider_id.value) {
@@ -232,13 +230,13 @@ const headers = [
   { title: "ZKRATKA", value: "abbreviation", sortable: true },
   { title: "IČO", value: "ic_number", sortable: true },
   { title: "DIČ", value: "tax_number" },
-  { title: "INFO/ÚPRAVA", value: "edit" },
+  { title: "DETAIL", value: "edit" },
 ];
 
 async function getEntities() {
   try {
     const response = await Axios.get("entity");
-    return response.data;
+    entities.value = response.data;
   } catch (error) {
     console.error(error);
   }
@@ -262,7 +260,7 @@ function editEntity(item: any) {
 }
 
 onMounted(async () => {
-  entities.value = await getEntities();
+  getEntities();
 });
 </script>
 

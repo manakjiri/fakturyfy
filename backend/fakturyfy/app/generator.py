@@ -42,7 +42,6 @@ class InvoiceExporter:
             bank_code=client.bank_code,
             ir=client.ic_number,
             vat_id=client.tax_number,
-            note=client.tax_note,
         )
         
         self.number = str(number)

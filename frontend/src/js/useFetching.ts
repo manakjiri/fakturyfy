@@ -27,6 +27,7 @@ export default function useFetching() {
     Axios.defaults.headers.post['Accept'] = 'application/json';
     Axios.defaults.headers.post['Content-Type'] = 'application/json';
     Axios.defaults.headers.delete['X-CSRFToken'] = getCookie('csrftoken');
+    Axios.defaults.headers.put['X-CSRFToken'] = getCookie('csrftoken');
 
     return {Axios}
 }

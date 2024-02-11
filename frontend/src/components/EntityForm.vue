@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card>
-      <v-form>
+      <v-form v-model="valid">
         <v-container>
           <v-row class="text-h5 ml-2 font-weight-light mt-2 pd-2">
             Subjekt
@@ -10,15 +10,15 @@
             <v-col>
               <v-text-field
                 v-model="form_values.name"
-                label="Jméno"
-                required
+                label="Jméno (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.abbreviation"
-                label="Zkratka"
-                required
+                label="Zkratka (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -26,8 +26,8 @@
             <v-col>
               <v-text-field
                 v-model="form_values.ic_number"
-                label="IČO"
-                required
+                label="IČO (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -47,15 +47,14 @@
             <v-col>
               <v-text-field
                 v-model="form_values.bank_account"
-                label="Bankovní účet"
-                required
+                label="Bankovní účet (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.bank_code"
                 label="Kod banky"
-                required
               ></v-text-field>
             </v-col>
             <v-col>
@@ -69,15 +68,15 @@
             <v-col>
               <v-text-field
                 v-model="form_values.address"
-                label="Adresa"
-                required
+                label="Adresa (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.zip_code"
-                label="PSČ"
-                required
+                label="PSČ (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -85,15 +84,15 @@
             <v-col>
               <v-text-field
                 v-model="form_values.city"
-                label="Město"
-                required
+                label="Město (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.country"
-                label="Stát"
-                required
+                label="Stát (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -114,7 +113,8 @@
           <v-row justify="space-between">
             <v-col cols="auto"> </v-col>
             <v-col cols="auto">
-              <v-btn class="my-button" @click="newEntity">Uložit</v-btn>
+              <v-btn v-if="entity_id" class="my-button mr-2" color="#965151" @click="deleteEntity">Smazat</v-btn>
+              <v-btn :disabled="!valid" class="my-button" @click="editEntity">Uložit</v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -128,10 +128,13 @@ import { onMounted, ref } from "vue";
 import useFetching from "@/js/useFetching";
 
 const { Axios } = useFetching();
-
-const showForm = ref(false);
+const valid = ref(false);
 
 const props = defineProps(["entity_id"]);
+const emit = defineEmits(["updated", "close"]);
+
+//create required rule:
+const required = (v: string) => !!v || "Povinné pole";
 
 interface Entity {
   name: string;
@@ -190,6 +193,7 @@ async function newEntity() {
     const response = await Axios.post("entity/", req);
     console.log(response.data);
     return response.data;
+
   } catch (error) {
     console.error(error);
   }
@@ -206,7 +210,37 @@ async function fetchEntity() {
   }
 }
 
-const entities = ref();
+async function updateEntity() {
+  console.log("updateEntity");
+  try {
+    const req = form_values.value;
+    console.log(req);
+    const response = await Axios.put(`entity/${props.entity_id}/`, req);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function editEntity() {
+  console.log("editEntity");
+  if (props.entity_id) {
+    await updateEntity();
+  } else {
+    await newEntity();
+  }
+  emit("updated");
+  emit("close");
+}
+
+async function deleteEntity() {
+  console.log("deleteEntity");
+  const response = await Axios.delete(`entity/${props.entity_id}`);
+  emit("updated");
+  emit("close");
+}
+
 </script>
 
 <style scoped>
