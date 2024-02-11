@@ -37,44 +37,53 @@
         ></v-select>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="3">
-        <v-btn @click="showFakturaForm = true">Nová faktura</v-btn>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-col>
+        <v-btn class="my-button" @click="showFakturaForm = true"
+          >Nová faktura</v-btn
+        >
       </v-col>
     </v-row>
 
-    <v-container v-if="existing_invoices">
-      <v-row
-        v-for="invoice in existing_invoices"
-        :key="invoice.name"
-        justify="space-between"
-      >
-        <v-col cols="9" align-self="center">
-          <v-row no-gutters justify="start">
-            <v-col cols="1"><v-icon icon="mdi-file-pdf-box"></v-icon></v-col>
-            <v-col
-              ><v-sheet>{{ invoice.name }}</v-sheet></v-col
+    <v-card class="my-card">
+      <v-container v-if="existing_invoices">
+        <v-row
+          v-for="invoice in existing_invoices"
+          :key="invoice.name"
+          justify="space-between"
+        >
+          <v-col cols="9" align-self="center">
+            <v-row no-gutters justify="start">
+              <v-col cols="1"><v-icon icon="mdi-file-pdf-box"></v-icon></v-col>
+              <v-col
+                ><v-sheet class="my-sheet">{{ invoice.name }}</v-sheet></v-col
+              >
+              <v-col
+                ><v-sheet class="my-sheet"
+                  >{{ invoice.provider }} → {{ invoice.client }}</v-sheet
+                ></v-col
+              >
+              <v-col
+                ><v-sheet class="my-sheet">{{
+                  new Date(invoice.modify_time * 1000).toLocaleString("cs")
+                }}</v-sheet></v-col
+              >
+            </v-row>
+          </v-col>
+          <v-col><v-spacer></v-spacer></v-col>
+          <v-col cols="2" align-self="center">
+            <v-btn
+              class="my-button"
+              :href="`static/${invoice.path}`"
+              target="_blank"
+              >otevřít</v-btn
             >
-            <v-col
-              ><v-sheet
-                >{{ invoice.provider }} → {{ invoice.client }}</v-sheet
-              ></v-col
-            >
-            <v-col
-              ><v-sheet>{{
-                new Date(invoice.modify_time * 1000).toLocaleString("cs")
-              }}</v-sheet></v-col
-            >
-          </v-row>
-        </v-col>
-        <v-col><v-spacer></v-spacer></v-col>
-        <v-col cols="2" align-self="center">
-          <v-btn :href="`static/${invoice.path}`" target="_blank"
-            >otevřít</v-btn
-          >
-        </v-col>
-        <v-divider></v-divider>
-      </v-row>
-    </v-container>
+          </v-col>
+          <v-divider></v-divider>
+        </v-row>
+      </v-container>
+    </v-card>
   </v-container>
 
   <v-container v-if="subjekty">
@@ -184,10 +193,8 @@ const headers = [
 ];
 
 async function getEntities() {
-  console.log("getEntities");
   try {
     const response = await Axios.get("entity");
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -234,6 +241,14 @@ onMounted(async () => {
 }
 
 .my-data-table {
+  background-color: rgb(67, 67, 67);
+}
+
+.my-card {
+  background-color: rgb(67, 67, 67);
+}
+
+.my-sheet {
   background-color: rgb(67, 67, 67);
 }
 </style>
