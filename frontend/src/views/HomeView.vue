@@ -46,8 +46,8 @@
       </v-col>
     </v-row>
 
-    <v-card class="my-card">
-      <v-container v-if="existing_invoices">
+    <v-card class="my-card" v-if="existing_invoices.length > 0">
+      <v-container>
         <v-row
           v-for="invoice in existing_invoices"
           :key="invoice.name"
@@ -98,6 +98,7 @@
         <template v-slot:item.edit="{ item }">
           <v-icon @click="editEntity(item)" icon="mdi-magnify-expand"></v-icon>
         </template>
+
       </v-data-table>
     </v-row>
 
@@ -111,7 +112,7 @@
 
   <v-container>
     <v-dialog v-model="showForm" scrim="true" class="form">
-      <EntityForm :entity_id="chosenEntityId"></EntityForm>
+      <EntityForm @close="showForm=false" @updated="getEntities" :entity_id="chosenEntityId"></EntityForm>
     </v-dialog>
   </v-container>
 
@@ -130,6 +131,7 @@ import { onMounted, ref, watch } from "vue";
 import EntityForm from "@/components/EntityForm.vue";
 import FakturaForm from "@/components/FakturaForm.vue";
 import useFetching from "@/js/useFetching";
+import { en } from "vuetify/locale";
 
 const { Axios } = useFetching();
 
@@ -189,13 +191,13 @@ const headers = [
   { title: "ZKRATKA", value: "abbreviation", sortable: true },
   { title: "IČO", value: "ic_number", sortable: true },
   { title: "DIČ", value: "tax_number" },
-  { title: "INFO/ÚPRAVA", value: "edit" },
+  { title: "DETAIL", value: "edit" },
 ];
 
 async function getEntities() {
   try {
     const response = await Axios.get("entity");
-    return response.data;
+    entities.value = response.data;
   } catch (error) {
     console.error(error);
   }
@@ -218,8 +220,11 @@ function editEntity(item: any) {
   showForm.value = true;
 }
 
+
+
+
 onMounted(async () => {
-  entities.value = await getEntities();
+  getEntities();
 });
 </script>
 
