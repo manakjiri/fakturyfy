@@ -48,3 +48,18 @@ class NewInvoiceSerializer(serializers.Serializer):
     def create(self, validated_data):
         validated_data['item_list'] = [ItemSerializer(data=item).create(item) for item in validated_data['item_list']]
         return NewInvoiceRequest(**validated_data)
+
+
+class GetInvoicesRequest:
+    def __init__(self, provider_id: int | None = None, client_id: int | None = None) -> None:
+        self.provider_id = provider_id
+        self.client_id = client_id
+
+class GetInvoicesSerializer(serializers.Serializer):
+    provider_id = serializers.IntegerField(required=False, allow_null=True)
+    client_id = serializers.IntegerField(required=False, allow_null=True)
+
+    def create(self, validated_data: dict):
+        assert ('provider_id' in validated_data and validated_data['provider_id'] is not None) \
+            or ('client_id' in validated_data and validated_data['client_id'] is not None)
+        return GetInvoicesRequest(**validated_data)

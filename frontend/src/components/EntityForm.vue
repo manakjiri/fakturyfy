@@ -3,6 +3,9 @@
     <v-card>
       <v-form>
         <v-container>
+          <v-row class="text-h5 ml-2 font-weight-light mt-2 pd-2">
+            Subjekt
+          </v-row>
           <v-row>
             <v-col>
               <v-text-field
@@ -36,7 +39,7 @@
             <v-col>
               <v-text-field
                 v-model="form_values.tax_note"
-                label="Daňová poznámka"
+                label="Poznámka"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -111,7 +114,7 @@
           <v-row justify="space-between">
             <v-col cols="auto"> </v-col>
             <v-col cols="auto">
-              <v-btn @click="newEntity">Uložit</v-btn>
+              <v-btn class="my-button" @click="newEntity">Uložit</v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -127,6 +130,8 @@ import useFetching from "@/js/useFetching";
 const { Axios } = useFetching();
 
 const showForm = ref(false);
+
+const props = defineProps(["entity_id"]);
 
 interface Entity {
   name: string;
@@ -146,22 +151,35 @@ interface Entity {
   logo: string | null;
 }
 
-const form_values = ref<Entity>({
-  name: "",
-  abbreviation: "",
-  ic_number: "",
-  tax_number: "",
-  tax_note: "",
-  bank_account: "",
-  bank_code: "",
-  bank_name: "",
-  address: "",
-  zip_code: "",
-  city: "",
-  country: "",
-  email: "",
-  phone: "",
-  logo: null,
+const form_values = ref<Entity>(createEmptyEntity());
+
+function createEmptyEntity(){
+  return {
+    name: "",
+    abbreviation: "",
+    ic_number: "",
+    tax_number: "",
+    tax_note: "",
+    bank_account: "",
+    bank_code: "",
+    bank_name: "",
+    address: "",
+    zip_code: "",
+    city: "",
+    country: "",
+    email: "",
+    phone: "",
+    logo: null,
+  }
+}
+
+//create form values as computed, empty if entity_id is null, else fetch the entity:
+onMounted(() => {
+  if (props.entity_id) {
+    fetchEntity();
+  } else {
+    form_values.value = createEmptyEntity();
+  }
 });
 
 async function newEntity() {
@@ -177,5 +195,22 @@ async function newEntity() {
   }
 }
 
+async function fetchEntity() {
+  console.log("fetchEntity");
+  try {
+    const response = await Axios.get(`entity/${props.entity_id}`);
+    console.log(response.data);
+    form_values.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const entities = ref();
 </script>
+
+<style scoped>
+.my-button {
+  background-color: rgb(101, 101, 101);
+}
+</style>
