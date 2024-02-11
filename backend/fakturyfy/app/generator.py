@@ -25,8 +25,8 @@ class InvoiceExporter:
             bank_code=provider.bank_code,
             ir=provider.ic_number,
             vat_id=provider.tax_number,
-            vat_note=provider.tax_note,
-            #logo_filename=provider.logo_filename,
+            note=provider.tax_note,
+            logo_filename=provider.logo.path if provider.logo else None
         )
 
         self.client = Client(
@@ -42,7 +42,7 @@ class InvoiceExporter:
             bank_code=client.bank_code,
             ir=client.ic_number,
             vat_id=client.tax_number,
-            vat_note=client.tax_note,
+            note=client.tax_note,
         )
         
         self.number = str(number)
