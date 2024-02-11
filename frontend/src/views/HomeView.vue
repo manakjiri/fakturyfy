@@ -86,36 +86,6 @@
     </v-card>
   </v-container>
 
-  <v-container v-if="faktury">
-    <v-data-table
-      v-if="existing_invoices.length > 0"
-      class="my-data-table elevation-2"
-      :items="existing_invoices"
-      :headers="invoices_headers"
-      items-per-page-text="Faktur na stránku"
-    >
-      <template v-slot:item.ikonka="{ item }">
-        <v-icon icon="mdi-file-pdf-box"></v-icon>
-      </template>
-
-      <template v-slot:item.date="{ item }">
-        {{ new Date(item.modify_time * 1000).toLocaleString("cs") }}
-      </template>
-
-      <template v-slot:item.client_provider="{ item }">
-        {{ item.provider }} → {{ item.client }}
-      </template>
-
-      <template v-slot:item.open="{ item }">
-        <v-btn class="my-button" :href="`static/${item.path}`" target="_blank"
-          >otevřít</v-btn
-        >
-      </template>
-    </v-data-table>
-  </v-container>
-
-  {{ existing_invoices }}
-
   <v-container v-if="subjekty">
     <v-row class="text-h5 mt-2 mb-2 font-weight-light"> Subjekty: </v-row>
     <v-row>
@@ -213,14 +183,6 @@ watch([client_id, provider_id], async () => {
     existing_invoices.value = [];
   }
 });
-
-const invoices_headers = [
-  { title: "", value: "ikonka" },
-  { title: "", value: "name", sortable: true },
-  { title: "", value: "client_provider" },
-  { title: "", value: "date"},
-  { title: "", value: "open" },
-];
 
 const headers = [
   { title: "JMÉNO", value: "name", sortable: true },
