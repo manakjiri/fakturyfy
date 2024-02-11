@@ -1,5 +1,5 @@
 <template>
-  <v-container class="zapati elevation-3">
+  <v-container>
     <v-row justify="space-between">
       <v-col cols="auto">
         <v-btn class="my-button" @click="fakturyView">Faktury</v-btn>
@@ -11,40 +11,50 @@
   </v-container>
 
   <v-container v-if="faktury">
-    <v-row>
-      <v-col cols="3">
-        <v-select
-          class="selector"
-          label="Poskytovatel"
-          :append-icon="'mdi-close'"
-          @click:append="clearSelectionProvider"
-          v-model="provider_id"
-          :items="entities"
-          item-title="abbreviation"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-col cols="3">
-        <v-select
-          class="selector"
-          label="Odběratel"
-          :append-icon="'mdi-close'"
-          @click:append="clearSelectionClient"
-          v-model="client_id"
-          :items="entities"
-          item-title="abbreviation"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-col>
-        <v-btn class="my-button" @click="showFakturaForm = true"
-          >Nová faktura</v-btn
-        >
-      </v-col>
-    </v-row>
+    <v-sheet
+      class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
+      height="250"
+      max-width="800"
+      width="100%"
+      color="rgba(0, 0, 0, 0)"
+    >
+      <v-row justify="space-between" align="start">
+        <v-col cols="3">
+          <v-select
+            class="selector"
+            label="Poskytovatel"
+            :append-icon="'mdi-close'"
+            @click:append="clearSelectionProvider"
+            v-model="provider_id"
+            :items="entities"
+            item-title="abbreviation"
+            item-value="id"
+          ></v-select>
+        </v-col>
+        <v-col cols="3">
+          <v-select
+            class="selector"
+            label="Odběratel"
+            :append-icon="'mdi-close'"
+            @click:append="clearSelectionClient"
+            v-model="client_id"
+            :items="entities"
+            item-title="abbreviation"
+            item-value="id"
+          ></v-select>
+        </v-col>
+        <v-col cols="3">
+          <v-btn
+            class="my-button"
+            size="x-large"
+            style="height: 57px;"
+            @click="showFakturaForm = true"
+            :disabled="providerClientNotSelected"
+            >Nová faktura</v-btn
+          >
+        </v-col>
+      </v-row>
+    </v-sheet>
 
     <v-card class="my-card">
       <v-container v-if="existing_invoices">
@@ -172,6 +182,10 @@ function clearSelectionProvider() {
   provider_id.value = null;
 }
 
+function providerClientNotSelected() {
+  return !(client_id.value && provider_id.value);
+}
+
 watch([client_id, provider_id], async () => {
   if (client_id.value || provider_id.value) {
     console.log("updateExistingInvoices");
@@ -229,26 +243,26 @@ onMounted(async () => {
 }
 
 .zapati {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--color-background-soft);
 }
 
 .selector {
-  width: 200px;
+  width: 250px;
 }
 
 .my-button {
-  background-color: rgb(101, 101, 101);
+  background-color: var(--color-background-mute);
 }
 
 .my-data-table {
-  background-color: rgb(67, 67, 67);
+  background-color: var(--color-background-soft);
 }
 
 .my-card {
-  background-color: rgb(67, 67, 67);
+  background-color: var(--color-background-soft);
 }
 
 .my-sheet {
-  background-color: rgb(67, 67, 67);
+  background-color: var(--color-background-soft);
 }
 </style>

@@ -16,7 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped lang="css">
 .v-main {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--color-background-soft)
   /* padding: 0;
   margin: 0; */
 }
