@@ -121,7 +121,14 @@
             </v-col>
           </v-row>
           <v-row justify="space-between">
-            <v-col cols="auto"> </v-col>
+            <!-- <v-col>
+              <v-file-input
+                v-model="form_values.logo"
+                label="Logo"
+                accept="image/*"
+              ></v-file-input>
+            </v-col> -->
+            <v-col cols="auto"></v-col>
             <v-col cols="auto">
               <v-btn
                 v-if="entity_id"
@@ -170,7 +177,7 @@ interface Entity {
   country: string;
   email: string;
   phone: string;
-  logo: string | null;
+  logo: any;
 }
 
 const form_values = ref<Entity>(createEmptyEntity());
@@ -230,6 +237,30 @@ async function fetchEntity() {
   } catch (error) {
     console.error(error);
   }
+}
+
+async function readFile(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        // Resolve the promise with the response value
+        /* resolve({
+          'image': reader.result,
+          'name': file.name
+        }); */
+        console.log("reader.result");
+        console.log(reader.result);
+        resolve(reader.result);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 async function updateEntity() {
