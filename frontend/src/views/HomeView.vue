@@ -52,14 +52,14 @@
               size="x-large"
               style="height: 57px"
               @click="showFakturaForm = true"
-              :disabled=providerClientNotSelected
+              :disabled="providerClientNotSelected"
               >Nová faktura</v-btn
             >
           </v-col>
         </v-row>
       </v-sheet>
 
-      <v-card class="my-card" v-if="existing_invoices.length > 0">
+      <v-card class="my-card ml-6 mr-6" v-if="existing_invoices.length > 0">
         <v-container>
           <v-row
             v-for="invoice in existing_invoices"
@@ -86,6 +86,7 @@
                 target="_blank"
                 >otevřít</v-btn
               >
+              <!-- <v-icon color="#965151" class="ml-2" icon="mdi-close-circle"></v-icon> -->
             </v-col>
             <v-divider></v-divider>
           </v-row>
@@ -110,12 +111,12 @@
         </v-row>
       </v-container>
 
-      <v-row class="text-h5 mt-15 mb-5 font-weight-light"
+      <v-row class="text-h5 mt-15 mb-5 ml-5 font-weight-light"
         >Uložené subjekty</v-row
       >
       <v-row>
         <v-data-table
-          class="my-data-table elevation-2"
+          class="my-data-table elevation-2 ml-6 mr-6"
           :headers="headers"
           :items="entities"
           items-per-page-text="Subjektů na stránku"
@@ -129,7 +130,7 @@
         </v-data-table>
       </v-row>
 
-      <v-row justify="space-between">
+      <v-row justify="space-between" class="mr-2">
         <v-col cols="auto"> </v-col>
         <v-col cols="auto">
           <v-btn class="my-button" @click="createNewEntity">Nový subjekt</v-btn>
@@ -151,6 +152,8 @@
   <v-container>
     <v-dialog v-model="showFakturaForm" scrim="true" class="form">
       <FakturaForm
+        @updated="updateExistingInvoices"
+        @close="showFakturaForm = false"
         :client_id="client_id"
         :provider_id="provider_id"
       ></FakturaForm>
@@ -209,24 +212,28 @@ function clearSelectionProvider() {
   provider_id.value = null;
 }
 
-const providerClientNotSelected = computed( () => {
+const providerClientNotSelected = computed(() => {
   return !(client_id.value !== null && provider_id.value !== null);
-})
+});
 
 watch([client_id, provider_id], async () => {
   if (client_id.value || provider_id.value) {
-    console.log("updateExistingInvoices");
-    const req = { client_id: client_id.value, provider_id: provider_id.value };
-    const response = await Axios.get(`invoice/list`, { params: req });
-    console.log(response.data);
-    existing_invoices.value = response.data;
+    updateExistingInvoices();
   } else {
     existing_invoices.value = [];
   }
 });
 
+async function updateExistingInvoices() {
+  console.log("updateExistingInvoices");
+  const req = { client_id: client_id.value, provider_id: provider_id.value };
+  const response = await Axios.get(`invoice/list`, { params: req });
+  console.log(response.data);
+  existing_invoices.value = response.data;
+}
+
 const headers = [
-  { title: "JMÉNO", value: "name", sortable: true },
+  { title: "NÁZEV", value: "name", sortable: true },
   { title: "ZKRATKA", value: "abbreviation", sortable: true },
   { title: "IČO", value: "ic_number", sortable: true },
   { title: "DIČ", value: "tax_number" },
@@ -286,10 +293,6 @@ onMounted(async () => {
 }
 
 .my-card {
-  background-color: var(--color-background-soft);
-}
-
-.my-sheet {
   background-color: var(--color-background-soft);
 }
 </style>

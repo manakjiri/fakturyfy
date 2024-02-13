@@ -10,16 +10,26 @@
             <v-col>
               <v-text-field
                 v-model="form_values.name"
-                label="Jméno (*)"
+                label="Název (*)"
                 :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
-                v-model="form_values.abbreviation"
                 label="Zkratka (*)"
+                v-model="form_values.abbreviation"
                 :rules="[required]"
-              ></v-text-field>
+              >
+                <template #append>
+                  <v-tooltip bottom>
+                    <template #activator="{ props }">
+                      <v-icon v-bind="props"> mdi-information-outline </v-icon>
+                    </template>
+                    Zkratka bude použita pro výběr subjektů při tvorbě faktury.<br>
+                    Na fakturách bude název subjektu.
+                  </v-tooltip>
+                </template>
+              </v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -113,8 +123,16 @@
           <v-row justify="space-between">
             <v-col cols="auto"> </v-col>
             <v-col cols="auto">
-              <v-btn v-if="entity_id" class="my-button mr-2" color="#965151" @click="deleteEntity">Smazat</v-btn>
-              <v-btn :disabled="!valid" class="my-button" @click="editEntity">Uložit</v-btn>
+              <v-btn
+                v-if="entity_id"
+                class="my-button mr-2"
+                color="#965151"
+                @click="deleteEntity"
+                >Smazat</v-btn
+              >
+              <v-btn :disabled="!valid" class="my-button" @click="editEntity"
+                >Uložit</v-btn
+              >
             </v-col>
           </v-row>
         </v-container>
@@ -129,6 +147,7 @@ import useFetching from "@/js/useFetching";
 
 const { Axios } = useFetching();
 const valid = ref(false);
+const showTooltip = ref(false);
 
 const props = defineProps(["entity_id"]);
 const emit = defineEmits(["updated", "close"]);
@@ -156,7 +175,7 @@ interface Entity {
 
 const form_values = ref<Entity>(createEmptyEntity());
 
-function createEmptyEntity(){
+function createEmptyEntity() {
   return {
     name: "",
     abbreviation: "",
@@ -173,7 +192,7 @@ function createEmptyEntity(){
     email: "",
     phone: "",
     logo: null,
-  }
+  };
 }
 
 //create form values as computed, empty if entity_id is null, else fetch the entity:
@@ -185,6 +204,10 @@ onMounted(() => {
   }
 });
 
+/* function onInfoIconClick() {
+  showTooltip.value = !showTooltip.value;
+} */
+
 async function newEntity() {
   console.log("newEntity");
   try {
@@ -193,7 +216,6 @@ async function newEntity() {
     const response = await Axios.post("entity/", req);
     console.log(response.data);
     return response.data;
-
   } catch (error) {
     console.error(error);
   }
@@ -240,7 +262,6 @@ async function deleteEntity() {
   emit("updated");
   emit("close");
 }
-
 </script>
 
 <style scoped>
