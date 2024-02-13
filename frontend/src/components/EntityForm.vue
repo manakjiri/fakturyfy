@@ -37,7 +37,7 @@
               <v-text-field
                 v-model="form_values.ic_number"
                 label="IČO (*)"
-                :rules="[required, constraint_number]"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -159,7 +159,6 @@ const props = defineProps(["entity_id"]);
 const emit = defineEmits(["updated", "close"]);
 
 const required = (v: string) => !!v || "Povinné pole";
-const constraint_number = (v: string) => Number(v).toString() == v || "Musí být číslo";
 
 interface Entity {
   name: string;
