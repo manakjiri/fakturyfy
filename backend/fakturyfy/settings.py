@@ -27,6 +27,8 @@ SECRET_KEY = 'django-insecure-q9h^_e_5adio6gj)l+mt0p=&!-wx3-=kbhb2hi%#wo@*owx1@v
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True #delete in prod
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None #delete in prod
 
 
 # Application definition
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -107,5 +110,3 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CORS_ALLOW_ALL_ORIGINS = True #delete in prod

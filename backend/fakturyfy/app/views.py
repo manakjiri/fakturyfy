@@ -16,7 +16,6 @@ def index(request, page="index"):
 class EntityViewSet(viewsets.ModelViewSet):
     queryset = models.Entity.objects.all()
     serializer_class = serializers.EntitySerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class NewInvoice(APIView):
