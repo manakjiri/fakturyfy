@@ -29,7 +29,7 @@
               :append-icon="'mdi-close'"
               @click:append="clearSelectionProvider"
               v-model="provider_id"
-              :items="entities"
+              :items="providers"
               item-title="abbreviation"
               item-value="id"
             ></v-select>
@@ -41,7 +41,7 @@
               :append-icon="'mdi-close'"
               @click:append="clearSelectionClient"
               v-model="client_id"
-              :items="entities"
+              :items="clients"
               item-title="abbreviation"
               item-value="id"
             ></v-select>
@@ -118,7 +118,7 @@
         <v-data-table
           class="my-data-table elevation-2 ml-6 mr-6"
           :headers="headers"
-          :items="entities"
+          :items="clients"
           items-per-page-text="Subjektů na stránku"
         >
           <template v-slot:item.edit="{ item }">
@@ -236,20 +236,22 @@ const headers = [
   { title: "NÁZEV", value: "name", sortable: true },
   { title: "ZKRATKA", value: "abbreviation", sortable: true },
   { title: "IČO", value: "ic_number", sortable: true },
-  { title: "DIČ", value: "tax_number" },
+  { title: "ÚČET", value: "bank_account" },
   { title: "DETAIL", value: "edit" },
 ];
 
 async function getEntities() {
   try {
     const response = await Axios.get("entity");
-    entities.value = response.data;
+    clients.value = response.data;
+    providers.value = response.data.filter((item: any) => item.bank_account);
   } catch (error) {
     console.error(error);
   }
 }
 
-const entities = ref();
+const providers = ref();
+const clients = ref();
 const chosenEntityId = ref<number | null>(null);
 
 function createNewEntity() {

@@ -37,7 +37,7 @@
               <v-text-field
                 v-model="form_values.ic_number"
                 label="IČO (*)"
-                :rules="[required]"
+                :rules="[required, constraint_number]"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -57,8 +57,7 @@
             <v-col>
               <v-text-field
                 v-model="form_values.bank_account"
-                label="Bankovní účet (*)"
-                :rules="[required]"
+                label="Bankovní účet"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -159,8 +158,8 @@ const showTooltip = ref(false);
 const props = defineProps(["entity_id"]);
 const emit = defineEmits(["updated", "close"]);
 
-//create required rule:
 const required = (v: string) => !!v || "Povinné pole";
+const constraint_number = (v: string) => Number(v).toString() == v || "Musí být číslo";
 
 interface Entity {
   name: string;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card>
-      <v-form>
+      <v-form v-model="valid">
         <v-container>
           <v-row class="text-h5 ml-2 font-weight-light mt-2 pd-2">
             Nová faktura
@@ -40,6 +40,7 @@
                 v-model="item.description"
                 label="Popis"
                 density="compact"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -69,10 +70,14 @@
               <v-btn class="my-btn" @click="addItem">Přidat položku</v-btn>
             </v-col>
             <v-col cols="auto">
-              <v-btn class="my-btn mr-2" @click="newInvoice(false)">
+              <v-btn
+                class="my-btn mr-2"
+                :disabled="!valid"
+                @click="newInvoice(false)"
+              >
                 Ukázat náhled
               </v-btn>
-              <v-btn class="my-btn" @click="newInvoice(true)"
+              <v-btn class="my-btn" :disabled="!valid" @click="newInvoice(true)"
                 >Vytvořit fakturu</v-btn
               >
             </v-col>
@@ -92,6 +97,8 @@ const { Axios } = useFetching();
 const props = defineProps(["client_id", "provider_id"]);
 const emit = defineEmits(["updated", "close"]);
 
+const valid = ref(false);
+const required = (v: string) => !!v || "Povinné pole";
 
 interface Item {
   description: string;
@@ -120,7 +127,7 @@ function addItem() {
 const new_invoice = ref<Invoice>({
   item_list: [],
   date: new Date().toISOString().slice(0, 10),
-  paydate: '7',
+  paydate: "7",
   currency: "CZK",
   save: false,
 });
@@ -132,7 +139,10 @@ async function newInvoice(save: boolean) {
     item_list: items,
     date: new_invoice.value.date,
     paydate: new Date(
-      new Date().setDate(new Date(new_invoice.value.date).getDate() + parseInt(new_invoice.value.paydate))
+      new Date().setDate(
+        new Date(new_invoice.value.date).getDate() +
+          parseInt(new_invoice.value.paydate)
+      )
     )
       .toISOString()
       .slice(0, 10),
@@ -143,9 +153,9 @@ async function newInvoice(save: boolean) {
     console.log(invoice);
     const response = await Axios.post("invoice/new", invoice);
     console.log(response.data);
-    window.open(`/static/${response.data.path}`, '_blank');
+    window.open(`/static/${response.data.path}`, "_blank");
     emit("updated");
-    if(save){
+    if (save) {
       emit("close");
     }
   } catch (error) {
