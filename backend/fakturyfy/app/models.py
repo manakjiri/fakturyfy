@@ -35,7 +35,7 @@ class Entity(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     bank_account = models.CharField(max_length=50)
-    bank_code = models.CharField(max_length=4)
+    bank_code = models.CharField(max_length=4, blank=True)
     bank_name = models.CharField(max_length=50, blank=True)
     logo = models.ImageField(upload_to='logos', blank=True, null=True)
 

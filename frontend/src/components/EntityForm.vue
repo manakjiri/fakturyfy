@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card>
-      <v-form>
+      <v-form v-model="valid">
         <v-container>
           <v-row class="text-h5 ml-2 font-weight-light mt-2 pd-2">
             Subjekt
@@ -10,24 +10,34 @@
             <v-col>
               <v-text-field
                 v-model="form_values.name"
-                label="Jméno"
-                required
+                label="Název (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
+                label="Zkratka (*)"
                 v-model="form_values.abbreviation"
-                label="Zkratka"
-                required
-              ></v-text-field>
+                :rules="[required]"
+              >
+                <template #append>
+                  <v-tooltip bottom>
+                    <template #activator="{ props }">
+                      <v-icon v-bind="props"> mdi-information-outline </v-icon>
+                    </template>
+                    Zkratka bude použita pro výběr subjektů při tvorbě faktury.<br>
+                    Na fakturách bude název subjektu.
+                  </v-tooltip>
+                </template>
+              </v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col>
               <v-text-field
                 v-model="form_values.ic_number"
-                label="IČO"
-                required
+                label="IČO (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -47,15 +57,14 @@
             <v-col>
               <v-text-field
                 v-model="form_values.bank_account"
-                label="Bankovní účet"
-                required
+                label="Bankovní účet (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.bank_code"
                 label="Kod banky"
-                required
               ></v-text-field>
             </v-col>
             <v-col>
@@ -69,15 +78,15 @@
             <v-col>
               <v-text-field
                 v-model="form_values.address"
-                label="Adresa"
-                required
+                label="Adresa (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.zip_code"
-                label="PSČ"
-                required
+                label="PSČ (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -85,15 +94,15 @@
             <v-col>
               <v-text-field
                 v-model="form_values.city"
-                label="Město"
-                required
+                label="Město (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col>
               <v-text-field
                 v-model="form_values.country"
-                label="Stát"
-                required
+                label="Stát (*)"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -112,9 +121,25 @@
             </v-col>
           </v-row>
           <v-row justify="space-between">
-            <v-col cols="auto"> </v-col>
+            <!-- <v-col>
+              <v-file-input
+                v-model="form_values.logo"
+                label="Logo"
+                accept="image/*"
+              ></v-file-input>
+            </v-col> -->
+            <v-col cols="auto"></v-col>
             <v-col cols="auto">
-              <v-btn class="my-button" @click="newEntity">Uložit</v-btn>
+              <v-btn
+                v-if="entity_id"
+                class="my-button mr-2"
+                color="#965151"
+                @click="deleteEntity"
+                >Smazat</v-btn
+              >
+              <v-btn :disabled="!valid" class="my-button" @click="editEntity"
+                >Uložit</v-btn
+              >
             </v-col>
           </v-row>
         </v-container>
@@ -128,10 +153,14 @@ import { onMounted, ref } from "vue";
 import useFetching from "@/js/useFetching";
 
 const { Axios } = useFetching();
-
-const showForm = ref(false);
+const valid = ref(false);
+const showTooltip = ref(false);
 
 const props = defineProps(["entity_id"]);
+const emit = defineEmits(["updated", "close"]);
+
+//create required rule:
+const required = (v: string) => !!v || "Povinné pole";
 
 interface Entity {
   name: string;
@@ -148,12 +177,12 @@ interface Entity {
   country: string;
   email: string;
   phone: string;
-  logo: string | null;
+  logo: any;
 }
 
 const form_values = ref<Entity>(createEmptyEntity());
 
-function createEmptyEntity(){
+function createEmptyEntity() {
   return {
     name: "",
     abbreviation: "",
@@ -170,7 +199,7 @@ function createEmptyEntity(){
     email: "",
     phone: "",
     logo: null,
-  }
+  };
 }
 
 //create form values as computed, empty if entity_id is null, else fetch the entity:
@@ -181,6 +210,10 @@ onMounted(() => {
     form_values.value = createEmptyEntity();
   }
 });
+
+/* function onInfoIconClick() {
+  showTooltip.value = !showTooltip.value;
+} */
 
 async function newEntity() {
   console.log("newEntity");
@@ -206,7 +239,60 @@ async function fetchEntity() {
   }
 }
 
-const entities = ref();
+async function readFile(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        // Resolve the promise with the response value
+        /* resolve({
+          'image': reader.result,
+          'name': file.name
+        }); */
+        console.log("reader.result");
+        console.log(reader.result);
+        resolve(reader.result);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function updateEntity() {
+  console.log("updateEntity");
+  try {
+    const req = form_values.value;
+    console.log(req);
+    const response = await Axios.put(`entity/${props.entity_id}/`, req);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function editEntity() {
+  console.log("editEntity");
+  if (props.entity_id) {
+    await updateEntity();
+  } else {
+    await newEntity();
+  }
+  emit("updated");
+  emit("close");
+}
+
+async function deleteEntity() {
+  console.log("deleteEntity");
+  const response = await Axios.delete(`entity/${props.entity_id}`);
+  emit("updated");
+  emit("close");
+}
 </script>
 
 <style scoped>

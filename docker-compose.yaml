@@ -8,3 +8,7 @@ services:
     command: ./run.sh
     volumes:
       - ./data:/data
+    develop:
+      watch:
+        - action: rebuild
+          path: ./
