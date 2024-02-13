@@ -10,7 +10,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <router-view></router-view>
       </v-container>
     </v-main>
-    <v-footer class="footer d-flex flex-column">
+    <v-footer absolute class="footer d-flex flex-column">
       <v-row align="end" justify="center">
         <v-col cols="auto">
           Fakturyfy <a href="https://github.com/manakjiri/fakturyfy" target="_blank"><v-icon icon="mdi-github"></v-icon> GitHub </a>
