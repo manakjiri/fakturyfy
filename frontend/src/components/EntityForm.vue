@@ -111,10 +111,25 @@
             </v-col>
           </v-row>
           <v-row justify="space-between">
-            <v-col cols="auto"> </v-col>
+            <!-- <v-col>
+              <v-file-input
+                v-model="form_values.logo"
+                label="Logo"
+                accept="image/*"
+              ></v-file-input>
+            </v-col> -->
+            <v-col cols="auto"></v-col>
             <v-col cols="auto">
-              <v-btn v-if="entity_id" class="my-button mr-2" color="#965151" @click="deleteEntity">Smazat</v-btn>
-              <v-btn :disabled="!valid" class="my-button" @click="editEntity">Uložit</v-btn>
+              <v-btn
+                v-if="entity_id"
+                class="my-button mr-2"
+                color="#965151"
+                @click="deleteEntity"
+                >Smazat</v-btn
+              >
+              <v-btn :disabled="!valid" class="my-button" @click="editEntity"
+                >Uložit</v-btn
+              >
             </v-col>
           </v-row>
         </v-container>
@@ -151,12 +166,12 @@ interface Entity {
   country: string;
   email: string;
   phone: string;
-  logo: string | null;
+  logo: any;
 }
 
 const form_values = ref<Entity>(createEmptyEntity());
 
-function createEmptyEntity(){
+function createEmptyEntity() {
   return {
     name: "",
     abbreviation: "",
@@ -173,7 +188,7 @@ function createEmptyEntity(){
     email: "",
     phone: "",
     logo: null,
-  }
+  };
 }
 
 //create form values as computed, empty if entity_id is null, else fetch the entity:
@@ -193,7 +208,6 @@ async function newEntity() {
     const response = await Axios.post("entity/", req);
     console.log(response.data);
     return response.data;
-
   } catch (error) {
     console.error(error);
   }
@@ -208,6 +222,30 @@ async function fetchEntity() {
   } catch (error) {
     console.error(error);
   }
+}
+
+async function readFile(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        // Resolve the promise with the response value
+        /* resolve({
+          'image': reader.result,
+          'name': file.name
+        }); */
+        console.log("reader.result");
+        console.log(reader.result);
+        resolve(reader.result);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 async function updateEntity() {
@@ -240,7 +278,6 @@ async function deleteEntity() {
   emit("updated");
   emit("close");
 }
-
 </script>
 
 <style scoped>
