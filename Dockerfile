@@ -26,3 +26,5 @@ WORKDIR /app
 COPY --from=backend-build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=backend-build /app .
 COPY --from=vue-build /vue-app/dist fakturyfy/app/templates
+
+CMD [ "./run.sh" ]
