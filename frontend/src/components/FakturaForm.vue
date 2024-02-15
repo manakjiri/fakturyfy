@@ -35,7 +35,7 @@
             :key="index"
             :item="item"
           >
-            <v-col>
+            <v-col cols="9">
               <v-text-field
                 v-model="item.description"
                 label="Popis"
@@ -43,21 +43,21 @@
                 :rules="[required]"
               ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="1">
               <v-text-field
                 v-model="item.quantity"
                 label="Množství"
                 density="compact"
               ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="1">
               <v-text-field
                 v-model="item.price"
                 label="Cena"
                 density="compact"
               ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="1">
               <v-text-field
                 v-model="item.tax"
                 label="DPH"
@@ -116,12 +116,12 @@ interface Invoice {
 }
 
 const items = reactive<Item[]>([
-  { description: "", quantity: 0, price: 0, tax: 0 },
+  { description: "", quantity: 1, price: 0, tax: 0 },
 ]);
 
 function addItem() {
   //push an empty item to the items array:
-  items.push({ description: "", quantity: 0, price: 0, tax: 0 });
+  items.push({ description: "", quantity: 1, price: 0, tax: 0 });
 }
 
 const new_invoice = ref<Invoice>({
