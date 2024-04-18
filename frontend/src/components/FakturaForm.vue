@@ -10,7 +10,7 @@
             <v-col>
               <v-text-field
                 v-model="new_invoice.date"
-                label="Datum"
+                label="Datum YYYY-MM-DD"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -29,13 +29,15 @@
               ></v-text-field>
             </v-col>
           </v-row>
+        </v-container>
+        <v-container class="align-center">
           <v-row
-            style="height: 65px"
             v-for="(item, index) in items"
             :key="index"
             :item="item"
+            align="center"
           >
-            <v-col cols="9">
+            <v-col cols="7">
               <v-text-field
                 v-model="item.description"
                 label="Popis"
@@ -50,7 +52,7 @@
                 density="compact"
               ></v-text-field>
             </v-col>
-            <v-col cols="1">
+            <v-col cols="2">
               <v-text-field
                 v-model="item.price"
                 label="Cena"
@@ -64,10 +66,27 @@
                 density="compact"
               ></v-text-field>
             </v-col>
+            <v-col cols="1">
+              <v-btn
+                class="mb-5 my-btn"
+                @click="items.splice(index, 1)"
+                :disabled="items.length <= 1"
+                icon="mdi-close"
+                density="comfortable"
+                size="small">
+              </v-btn>
+            </v-col>
           </v-row>
-          <v-row justify="space-between">
+        </v-container>
+        <v-container>
+          <v-row justify="space-between" align="center">
             <v-col cols="auto">
               <v-btn class="my-btn" @click="addItem">Přidat položku</v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <div class="text-disabled">
+                Celkem {{ amountSum }} CZK, splatnost {{ dueDate }}
+              </div>
             </v-col>
             <v-col cols="auto">
               <v-btn
@@ -89,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive } from "vue";
+import { computed, ref, reactive } from "vue";
 import useFetching from "@/js/useFetching";
 
 const { Axios } = useFetching();
@@ -118,6 +137,9 @@ interface Invoice {
 const items = reactive<Item[]>([
   { description: "", quantity: 1, price: 0, tax: 0 },
 ]);
+const amountSum = computed(() =>
+  items.reduce((acc, item) => acc + item.quantity * item.price, 0)
+);
 
 function addItem() {
   //push an empty item to the items array:
@@ -131,6 +153,15 @@ const new_invoice = ref<Invoice>({
   currency: "CZK",
   save: false,
 });
+
+const dueDate = computed(() =>
+  new Date(
+    new Date(new_invoice.value.date).setDate(
+      new Date(new_invoice.value.date).getDate() +
+        parseInt(new_invoice.value.paydate)
+    )
+  ).toISOString().slice(0, 10)
+);
 
 async function newInvoice(save: boolean) {
   const invoice = {
