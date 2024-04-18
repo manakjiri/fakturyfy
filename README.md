@@ -12,7 +12,7 @@ Veškerá data jsou uložena v sqlite databázi (definice subjektů) a vygenerov
 
 [![Publish Docker image](https://github.com/manakjiri/fakturyfy/actions/workflows/docker-push.yaml/badge.svg?branch=main)](https://github.com/manakjiri/fakturyfy/actions/workflows/docker-push.yaml)
 
-Celá služba je zabalena do jednoho docker containeru, jehož image je dostupný na [docker hub](https://hub.docker.com/repository/docker/manakjiri/fakturyfy), tudíž je možné ji spustit příkazem
+Celá služba je zabalena do jednoho docker containeru, jehož image je dostupný na [docker hub](https://hub.docker.com/r/manakjiri/fakturyfy), tudíž je možné ji spustit příkazem
 ```sh
 docker run --rm --name fakturyfy --volume ./fakturyfy-data:/data --publish 8000 manakjiri/fakturyfy:main
 ```
