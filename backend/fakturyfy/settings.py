@@ -11,10 +11,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR.parent / 'data'
+CONFIG_FILE = BASE_DIR / 'config.json'
+config = json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
+DATA_DIR = Path(config.get('data_directory', BASE_DIR.parent / 'data'))
+DATA_DIR.mkdir(exist_ok=True)
 MEDIA_ROOT = DATA_DIR / 'media'
 
 # Quick-start development settings - unsuitable for production
@@ -32,7 +36,6 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None #delete in prod
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'fakturyfy.app',
     'django.contrib.admin',
