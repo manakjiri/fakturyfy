@@ -14,7 +14,7 @@ EXECUTABLE = 'python' if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPAS
 
 try:
     sys.path.append(str(SERVER_PATH))
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'fakturyfy.settings'
     import django
     django.setup()
     django.core.management.execute_from_command_line(['manage.py', 'migrate'])
