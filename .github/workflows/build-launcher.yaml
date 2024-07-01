@@ -16,8 +16,10 @@ jobs:
         board:
           - os: ubuntu-latest
             target: linux-x64
+            binary: fakturyfy-linux-x64
           - os: windows-latest
             target: win-x64
+            binary: fakturyfy-win-x64.exe
 
     runs-on: ${{ matrix.board.os }}
     steps:
@@ -60,8 +62,8 @@ jobs:
       - name: Build the binary
         run: |
           cd app
-          pyinstaller --onefile --noconfirm --hidden-import django --add-data backend:backend launcher.py
-          mv dist/launcher* ../fakturyfy-${{ matrix.board.target }}
+          pyinstaller --onefile --noconfirm --collect-submodules backend --add-data backend:backend launcher.py
+          mv dist/launcher* ../${{ matrix.board.binary }}
 
       - name: Compile .ISS to .EXE Installer on Windows
         if: matrix.board.target == 'win-x64'
