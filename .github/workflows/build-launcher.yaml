@@ -52,9 +52,8 @@ jobs:
 
       - name: Create app structure
         run: |
-          mkdir app
-          cp -r backend app/backend
-          cp -r frontend/dist app/backend/fakturyfy/app/templates
+          cp -r backend app
+          cp -r frontend/dist app/fakturyfy/app/templates
           cp -r launcher/launcher.py app/launcher.py
           mkdir dist
           cp launcher/fakturyfy-setup.iss dist/fakturyfy-setup.iss
@@ -62,7 +61,7 @@ jobs:
       - name: Build the binary
         run: |
           cd app
-          pyinstaller --onefile --noconfirm --collect-all fakturyfy --add-data backend:backend launcher.py
+          pyinstaller --onefile --noconfirm --collect-all fakturyfy launcher.py
           mv dist/launcher* ../${{ matrix.board.binary }}
 
       - name: Compile .ISS to .EXE Installer on Windows
