@@ -45,7 +45,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --no-cache-dir -r backend/requirements.txt -r launcher/requirements.txt
+          (cd backend && python -m pip install --no-cache-dir -r requirements.txt)
+          (cd launcher && python -m pip install --no-cache-dir -r requirements.txt)
 
       - name: Create app structure
         run: |
