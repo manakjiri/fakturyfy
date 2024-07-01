@@ -17,7 +17,7 @@ import json
 BASE_DIR = Path(__file__).resolve().parent.parent
 CONFIG_FILE = BASE_DIR / 'config.json'
 config = json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
-DATA_DIR = Path(config.get('data_directory', BASE_DIR.parent / 'data'))
+DATA_DIR = Path(config.get('data_directory', BASE_DIR.parent / 'data')).resolve()
 DATA_DIR.mkdir(exist_ok=True)
 MEDIA_ROOT = DATA_DIR / 'media'
 

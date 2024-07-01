@@ -1,0 +1,83 @@
+name: Publish Docker image
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        board:
+          - os: ubuntu-latest
+            target: linux-x64
+          - os: windows-latest
+            target: win-x64
+
+    runs-on: ${{ matrix.board.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build-only -- --outDir dist
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --no-cache-dir -r backend/requirements.txt -r launcher/requirements.txt
+
+      - name: Create app structure
+        run: |
+          mkdir app
+          cp -r backend app/backend
+          cp -r frontend/dist app/backend/fakturyfy/app/templates
+          cp -r launcher/launcher.py app/launcher.py
+          mkdir dist
+
+      - name: Build Linux binary
+        if: matrix.board.target == 'linux-x64'
+        run: |
+          cd app
+          pyinstaller --onefile --noconfirm --add-data backend:backend launcher.py
+          mv dist/launcher ../fakturyfy-linux-x64
+
+      - name: Build Windows binary
+        if: matrix.board.target == 'win-x64'
+        run: |
+          cp launcher/fakuryfy-setup.iss dist/fakturyfy-setup.iss
+          cd app
+          pyinstaller --onefile --noconfirm --add-data backend:backend launcher.py
+          mv dist/launcher.exe ../dist/launcher-win-x64.exe
+
+      - name: Compile .ISS to .EXE Installer on Windows
+        if: matrix.board.target == 'win-x64'
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.4
+        with:
+          path: dist/fakturyfy-setup.iss
+          options: /Ffakturyfy-setup-win-x64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fakturyfy-${{ matrix.board.target }}
+          path: fakturyfy-*
+

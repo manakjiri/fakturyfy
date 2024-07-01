@@ -1,0 +1,12 @@
+services:
+  build-linux:
+    build:
+      context: .
+      dockerfile: Dockerfile.linux
+    volumes:
+      - ./dist:/app/dist
+    command: pyinstaller 
+      --onefile 
+      --noconfirm 
+      --add-data backend:backend
+      launcher/launcher.py
