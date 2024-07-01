@@ -61,7 +61,7 @@ jobs:
       - name: Build the binary
         run: |
           cd app
-          pyinstaller --onefile --noconfirm --collect-all fakturyfy launcher.py
+          pyinstaller --onefile --noconfirm --collect-all InvoiceGenerator launcher.py
           mv dist/launcher* ../${{ matrix.board.binary }}
 
       - name: Compile .ISS to .EXE Installer on Windows
