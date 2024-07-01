@@ -55,21 +55,13 @@ jobs:
           cp -r frontend/dist app/backend/fakturyfy/app/templates
           cp -r launcher/launcher.py app/launcher.py
           mkdir dist
-
-      - name: Build Linux binary
-        if: matrix.board.target == 'linux-x64'
-        run: |
-          cd app
-          pyinstaller --onefile --noconfirm --add-data backend:backend launcher.py
-          mv dist/launcher ../fakturyfy-linux-x64
-
-      - name: Build Windows binary
-        if: matrix.board.target == 'win-x64'
-        run: |
           cp launcher/fakturyfy-setup.iss dist/fakturyfy-setup.iss
+
+      - name: Build the binary
+        run: |
           cd app
-          pyinstaller --onefile --noconfirm --add-data backend:backend launcher.py
-          mv dist/launcher.exe ../dist/launcher-win-x64.exe
+          pyinstaller --onefile --noconfirm --collect-all backend --add-data backend:backend launcher.py
+          mv dist/launcher* ../fakturyfy-${{ matrix.board.target }}
 
       - name: Compile .ISS to .EXE Installer on Windows
         if: matrix.board.target == 'win-x64'
