@@ -5,7 +5,7 @@
 #define MyAppVersion "1.0"
 #define MyAppPublisher "Lumias s.r.o."
 #define MyAppURL "https://lumias.cz"
-#define MyAppExeName "launcher-win-x64.exe"
+#define MyAppExeName "fakturyfy-win-x64.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
