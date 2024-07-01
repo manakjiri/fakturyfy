@@ -14,6 +14,7 @@ EXECUTABLE = 'python' if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPAS
 
 try:
     sys.path.append(str(SERVER_PATH))
+    sys.path.append(str(SERVER_PATH / 'external'))
     os.environ['DJANGO_SETTINGS_MODULE'] = 'fakturyfy.settings'
     import django
     django.setup()

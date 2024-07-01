@@ -62,7 +62,7 @@ jobs:
       - name: Build the binary
         run: |
           cd app
-          pyinstaller --onefile --noconfirm --path backend:backend/fakturyfy:backend/external --add-data backend:backend launcher.py
+          pyinstaller --onefile --noconfirm --hidden-import rest_framework --add-data backend:backend launcher.py
           mv dist/launcher* ../${{ matrix.board.binary }}
 
       - name: Compile .ISS to .EXE Installer on Windows
