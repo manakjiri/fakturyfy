@@ -13,7 +13,7 @@ SERVER_PATH = (Path(__file__).parent / 'backend').resolve()
 EXECUTABLE = 'python' if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') else sys.executable
 
 try:
-    sys.path.append(str(SERVER_PATH / 'fakturyfy'))
+    sys.path.append(str(SERVER_PATH))
     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
     import django
     django.setup()
