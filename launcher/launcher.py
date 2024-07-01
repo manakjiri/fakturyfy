@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 import signal
 import tkinter
 import tkinter.messagebox
@@ -8,12 +9,17 @@ from pathlib import Path
 
 SERVER_ADDRESS = '127.0.0.1:8000'
 SERVER_URL = 'http://' + SERVER_ADDRESS
-SERVER_PATH = Path(__file__).parent / 'backend'
+SERVER_PATH = (Path(__file__).parent / 'backend').resolve()
 EXECUTABLE = 'python' if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') else sys.executable
 
 try:
-    subprocess.run([EXECUTABLE, 'manage.py', 'migrate'], cwd=SERVER_PATH, check=True)
+    sys.path.append(str(SERVER_PATH / 'fakturyfy'))
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+    import django
+    django.setup()
+    django.core.management.execute_from_command_line(['manage.py', 'migrate'])
     server = subprocess.Popen([EXECUTABLE, 'manage.py', 'runserver', SERVER_ADDRESS], cwd='../backend')
+
 except subprocess.CalledProcessError as e:
     print('Failed to start server:', e)
     tkinter.messagebox.showerror('Chyba', 'Nepodařilo se spustit server.\n' + str(e))
