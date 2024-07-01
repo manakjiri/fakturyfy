@@ -9,7 +9,7 @@ from pathlib import Path
 SERVER_ADDRESS = '127.0.0.1:8000'
 SERVER_URL = 'http://' + SERVER_ADDRESS
 SERVER_PATH = Path(__file__).parent / 'backend'
-EXECUTABLE = 'python' if 'launcher' in sys.executable else sys.executable
+EXECUTABLE = 'python' if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') else sys.executable
 
 try:
     subprocess.run([EXECUTABLE, 'manage.py', 'migrate'], cwd=SERVER_PATH, check=True)
