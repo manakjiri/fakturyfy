@@ -60,7 +60,7 @@ jobs:
       - name: Build the binary
         run: |
           cd app
-          pyinstaller --onefile --noconfirm --collect-all backend --add-data backend:backend launcher.py
+          pyinstaller --onefile --noconfirm --hidden-import django --add-data backend:backend launcher.py
           mv dist/launcher* ../fakturyfy-${{ matrix.board.target }}
 
       - name: Compile .ISS to .EXE Installer on Windows

@@ -34,6 +34,7 @@ OutputBaseFilename=fakturyfy-setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+OutputDir=..
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
