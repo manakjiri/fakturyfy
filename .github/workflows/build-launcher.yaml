@@ -63,7 +63,7 @@ jobs:
         run: |
           cd app
           pyinstaller --onefile --noconfirm --collect-all InvoiceGenerator launcher.py
-          mv dist/launcher* ../${{ matrix.board.binary }}
+          mv dist/launcher* ../dist/${{ matrix.board.binary }}
 
       - name: Compile .ISS to .EXE Installer on Windows
         if: matrix.board.target == 'win-x64'
