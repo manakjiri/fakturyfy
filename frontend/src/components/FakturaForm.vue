@@ -73,7 +73,8 @@
                 :disabled="items.length <= 1"
                 icon="mdi-close"
                 density="comfortable"
-                size="small">
+                size="small"
+              >
               </v-btn>
             </v-col>
           </v-row>
@@ -154,14 +155,20 @@ const new_invoice = ref<Invoice>({
   save: false,
 });
 
-const dueDate = computed(() =>
-  new Date(
-    new Date(new_invoice.value.date).setDate(
-      new Date(new_invoice.value.date).getDate() +
-        parseInt(new_invoice.value.paydate)
+const dueDate = computed(() => {
+  try {
+    return new Date(
+      new Date(new_invoice.value.date).setDate(
+        new Date(new_invoice.value.date).getDate() +
+          parseInt(new_invoice.value.paydate)
+      )
     )
-  ).toISOString().slice(0, 10)
-);
+      .toISOString()
+      .slice(0, 10);
+  } catch (_error) {
+    return "- nevalidní datum";
+  }
+});
 
 async function newInvoice(save: boolean) {
   const invoice = {
