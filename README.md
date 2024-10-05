@@ -12,9 +12,19 @@ Veškerá data jsou uložena v sqlite databázi (definice subjektů) a vygenerov
 
 [![Publish Docker image](https://github.com/manakjiri/fakturyfy/actions/workflows/docker-push.yaml/badge.svg?branch=main)](https://github.com/manakjiri/fakturyfy/actions/workflows/docker-push.yaml)
 
-Celá služba je zabalena do jednoho docker containeru, jehož image je dostupný na [docker hub](https://hub.docker.com/r/manakjiri/fakturyfy), tudíž je možné ji spustit příkazem
+Celá služba je zabalena do jednoho docker containeru, jehož image je dostupný na [docker hub](https://hub.docker.com/r/manakjiri/fakturyfy).
+
+### Docker compose (doporučeno)
+
+Stáhněte si šablonu souboru [deploy/docker-compose.yaml](https://raw.githubusercontent.com/manakjiri/fakturyfy/refs/heads/main/deploy/docker-compose.yaml) a případně upravte dle instrukcí v něm. 
+
+Poté stačí spustit příkazem `docker compose up`, pokud vše proběhlo v pořádku a je možné zobrazit stránku nástroje (defaultně [localhost](http://localhost/)), můžete jej nechat běžet na pozadí příkazem `docker compose up -d` (spustí se i po restartu počítače).
+
+### Docker
+
+Pro rychlé vyzkoušení je možné spustit jedním příkazem
 ```sh
-docker run --rm --name fakturyfy --volume ./fakturyfy-data:/data --publish 8000 manakjiri/fakturyfy:main
+docker run --rm --name fakturyfy_server --volume ./fakturyfy-data:/data --publish 8000 manakjiri/fakturyfy:main
 ```
 služba bude dostupná na [http://localhost:8000/](http://localhost:8000/).
 

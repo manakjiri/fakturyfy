@@ -1,0 +1,32 @@
+# deployment docker-compose.yaml for fakturyfy https://github.com/manakjiri/fakturyfy
+# modify this file to suit your deployment needs
+# check release notes on GitHub for breaking changes before upgrading
+
+name: fakturyfy
+
+services:
+  fakturyfy-server:
+    container_name: fakturyfy_server
+    # uses the latest image from docker hub
+    # run `docker compose pull && docker compose up -d` to upgrade
+    image: manakjiri/fakturyfy:main
+    # the server listens on port 8000 inside the container
+    # this maps it to port 80 on the localhost
+    # you can also add an IP address using <IP>:80:8000
+    ports:
+      - "80:8000"
+    # the server writes data (DB and export history) to /data inside the container
+    # ./fakturyfy-data:/data maps /data to ./fakturyfy-data directory next to this file
+    # you can also setup an NFS volume as shown below
+    volumes:
+      - ./fakturyfy-data:/data
+      #- nas:/data
+    restart: always
+
+#volumes:
+#  nas:
+#    driver: local
+#    driver_opts:
+#      type: nfs
+#      o: addr=nas.lan,nolock,soft,rw
+#      device: :/path/to/data/folder/on/nas

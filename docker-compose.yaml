@@ -1,3 +1,6 @@
+# this is a docker-compose file for developement
+# see deploy/docker-compose.yaml for a deployment template
+
 services:
   fakturyfy:
     build: .
