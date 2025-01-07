@@ -11,6 +11,7 @@
               <v-text-field
                 v-model="new_invoice.date"
                 label="Datum YYYY-MM-DD"
+                :rules="[required, is_date]"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -18,6 +19,7 @@
                 v-model="new_invoice.paydate"
                 label="Datum splatnosti za"
                 :items="['7', '14', '30']"
+                :rules="[required, is_number]"
               >
               </v-combobox>
             </v-col>
@@ -50,6 +52,7 @@
                 v-model="item.quantity"
                 label="Množství"
                 density="compact"
+                :rules="[required, is_number]"
               ></v-text-field>
             </v-col>
             <v-col cols="2">
@@ -57,13 +60,15 @@
                 v-model="item.price"
                 label="Cena"
                 density="compact"
+                :rules="[required, is_number]"
               ></v-text-field>
             </v-col>
             <v-col cols="1">
               <v-text-field
                 v-model="item.tax"
-                label="DPH"
+                label="DPH %"
                 density="compact"
+                :rules="[is_number]"
               ></v-text-field>
             </v-col>
             <v-col cols="1">
@@ -111,6 +116,7 @@
 <script setup lang="ts">
 import { computed, ref, reactive } from "vue";
 import useFetching from "@/js/useFetching";
+import { ru } from "vuetify/locale";
 
 const { Axios } = useFetching();
 
@@ -119,6 +125,8 @@ const emit = defineEmits(["updated", "close"]);
 
 const valid = ref(false);
 const required = (v: string) => !!v || "Povinné pole";
+const is_number = (v: string) => !isNaN(parseFloat(v)) || "Musí být číslo";
+const is_date = (v: string) => v.match(/^\d{4}-\d{2}-\d{2}$/) || "Musí být ve formátu YYYY-MM-DD";
 
 interface Item {
   description: string;
@@ -176,14 +184,7 @@ async function newInvoice(save: boolean) {
     client_id: props.client_id,
     item_list: items,
     date: new_invoice.value.date,
-    paydate: new Date(
-      new Date().setDate(
-        new Date(new_invoice.value.date).getDate() +
-          parseInt(new_invoice.value.paydate)
-      )
-    )
-      .toISOString()
-      .slice(0, 10),
+    paydate: dueDate.value,
     currency: new_invoice.value.currency,
     save: save,
   };
