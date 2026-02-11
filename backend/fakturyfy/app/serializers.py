@@ -26,7 +26,7 @@ class ItemSerializer(serializers.Serializer):
 
 
 class NewInvoiceRequest:
-    def __init__(self, provider_id: int, client_id: int, item_list: list[RequestItem], date: datetime, paydate: datetime, currency: str, save: bool = False) -> None:
+    def __init__(self, provider_id: int, client_id: int, item_list: list[RequestItem], date: datetime, paydate: datetime, currency: str, save: bool = False, generate_qr: bool = True, reverse_charge: bool = False) -> None:
         self.provider = Entity.objects.get(pk=provider_id)
         self.client = Entity.objects.get(pk=client_id)
         self.item_list = item_list
@@ -34,6 +34,8 @@ class NewInvoiceRequest:
         self.paydate = paydate
         self.currency = currency
         self.save = save
+        self.generate_qr = generate_qr
+        self.reverse_charge = reverse_charge
         
 
 class NewInvoiceSerializer(serializers.Serializer):
@@ -44,6 +46,8 @@ class NewInvoiceSerializer(serializers.Serializer):
     paydate = serializers.DateTimeField()
     currency = serializers.CharField()
     save = serializers.BooleanField(required=False, default=False)
+    generate_qr = serializers.BooleanField(required=False, default=True)
+    reverse_charge = serializers.BooleanField(required=False, default=False)
 
     def create(self, validated_data):
         validated_data['item_list'] = [ItemSerializer(data=item).create(item) for item in validated_data['item_list']]

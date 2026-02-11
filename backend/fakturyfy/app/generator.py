@@ -50,6 +50,7 @@ class InvoiceExporter:
         self.payback = self.date + relativedelta(months=1)
         self.date_format = '%d.%m.%Y'
         self.currency = 'Kč'
+        self.reverse_charge = False
 
     def set_date(self, date: datetime) -> None:
         self.date = date
@@ -57,7 +58,10 @@ class InvoiceExporter:
     def set_payback(self, payback: datetime) -> None:
         self.payback = payback
 
-    def as_pdf(self, target_dir: Path = Path(__file__).parent.parent, prefix: str = 'faktura') -> Path:
+    def set_reverse_charge(self, reverse_charge: bool) -> None:
+        self.reverse_charge = reverse_charge
+
+    def as_pdf(self, target_dir: Path = Path(__file__).parent.parent, prefix: str = 'faktura', generate_qr: bool = True) -> Path:
         target_dir = Path(target_dir)
         assert target_dir.is_dir()
 
@@ -85,10 +89,13 @@ class InvoiceExporter:
         invoice.paytype = 'převod'
         invoice.use_tax = any([item.tax > 0 for item in invoice.items])
         invoice.payback = self.payback.strftime(self.date_format)
+
+        if self.reverse_charge:
+            self.client.vat_note = 'Daň odvede zákazník'
         
         document = ProformaInvoice(invoice)
         path = target_dir / f'{prefix}_{number}.pdf'
-        document.gen(str(path), generate_qr_code=True)
+        document.gen(str(path), generate_qr_code=generate_qr)
         return path
 
 
@@ -99,6 +106,7 @@ def generate_invoice(number: int, request: NewInvoiceRequest, target_dir: Path) 
     exporter = InvoiceExporter(number, request.provider, request.client, request.item_list)
     exporter.set_date(request.date)
     exporter.set_payback(request.paydate)
+    exporter.set_reverse_charge(request.reverse_charge)
     
-    return exporter.as_pdf(target_dir)
+    return exporter.as_pdf(target_dir, generate_qr=request.generate_qr)
 

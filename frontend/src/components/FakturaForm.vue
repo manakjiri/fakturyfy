@@ -107,6 +107,21 @@
               >
             </v-col>
           </v-row>
+          <v-row class="ml-1">
+            <v-checkbox
+                v-model="new_invoice.generate_qr"
+                label="Vygenerovat platební QR kód"
+                density="compact"
+                hide-details
+              ></v-checkbox>
+            <v-checkbox
+                v-model="new_invoice.reverse_charge"
+                label="Přenesení daňové povinnosti"
+                density="compact"
+                hide-details
+                class="ml-4"
+              ></v-checkbox>
+          </v-row>
         </v-container>
       </v-form>
     </v-card>
@@ -141,6 +156,8 @@ interface Invoice {
   paydate: string;
   currency: string;
   save: boolean;
+  generate_qr: boolean;
+  reverse_charge: boolean;
 }
 
 const items = reactive<Item[]>([
@@ -161,6 +178,8 @@ const new_invoice = ref<Invoice>({
   paydate: "7",
   currency: "CZK",
   save: false,
+  generate_qr: true,
+  reverse_charge: false,
 });
 
 const dueDate = computed(() => {
@@ -187,6 +206,8 @@ async function newInvoice(save: boolean) {
     paydate: dueDate.value,
     currency: new_invoice.value.currency,
     save: save,
+    generate_qr: new_invoice.value.generate_qr,
+    reverse_charge: new_invoice.value.reverse_charge,
   };
   try {
     console.log(invoice);
